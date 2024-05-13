@@ -35,12 +35,8 @@ func Worker(in <-chan int64, out chan<- int64) {
 	// 2. Функция Worker
 	defer close(out)
 
-	for {
-		num, ok := <-in
-		if !ok {
-			return
-		}
-		out <- num
+	for itemIn := range in {
+		out <- itemIn
 		time.Sleep(1 * time.Millisecond)
 	}
 }
@@ -49,8 +45,7 @@ func main() {
 	chIn := make(chan int64)
 
 	// 3. Создание контекста
-	const TimeCtx = 1 * time.Second
-	ctx, cancel := context.WithTimeout(context.Background(), TimeCtx)
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancel()
 
 	// для проверки будем считать количество и сумму отправленных чисел
